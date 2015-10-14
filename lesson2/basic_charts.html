@@ -31,8 +31,12 @@
 
           var myChart = new dimple.chart(svg, data);
           var x = myChart.addTimeAxis("x", "year"); 
+          x.dateParseFormat = "%Y";
+          x.tickFormat = "%Y";
+          x.timeInterval = 4;
           myChart.addMeasureAxis("y", "attendance");
-          myChart.addSeries(null, dimple.plot.bar);
+          myChart.addSeries(null, dimple.plot.line);
+          myChart.addSeries(null, dimple.plot.scatter);
           myChart.draw();
         };
       </script>
