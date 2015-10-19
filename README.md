@@ -1,5 +1,6 @@
 #Summary
 *(in no more than 4 sentences, briefly introduce your data visualization and add any context that can help readers understand it)*
+
 The visualization communicates a simple message and answers two questions: 
 - What are the 10 largest airports in US by the number of domestic flights in 2008 ? 
 - How many flights occured between these airports ?
@@ -11,7 +12,7 @@ Usage notes:
 
 The original dataset was downloaded from [here](http://stat-computing.org/dataexpo/2009/2008.csv.bz2) and [here](http://stat-computing.org/dataexpo/2009/airports.csv)
 
-Exploratory data analysis and construction of the data for visualization is done with R (see eda.R). You can find the data in ./data folder.
+Exploratory data analysis and construction of the datasets for a visualization is done with R (see eda.R). 
 
 #Design
 *(explain any design choices you made including changes to the visualization after collecting feedback)*
