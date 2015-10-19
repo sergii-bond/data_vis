@@ -20,7 +20,7 @@ Exploratory data analysis and construction of the datasets for a visualization i
 * The size of the circle corresponds to the total amount of flights for an airport. This helps a reader to qualitatively estimate the difference in flights among airports. 
 * The color of all circles was chosen to be uniform, because there exists no intended data to encode by color.
 * If the mouse is hovered over the circle, the tooltip appears to show the exact number of flights for the corresponding airport with its IATA code and name. In addition, the arrows show up which point to the destination airports with a number of flights from the origin for each of them. This information could't be shown statically because of the space limitations. 
-* The color map's land and state boundaries is chosen to be as dim as possible not to distract a reader from more important data shown in the visualization.
+* The color map's land and state boundaries are chosen to be as dim as possible not to distract a reader from more important data shown in the visualization.
 
 #Feedback 
 *(include all feedback you received from others on your visualization from the first sketch to the final visualization)*
