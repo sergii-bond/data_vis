@@ -130,7 +130,7 @@
             .attr("id", "circles");
 
         // Draw US map, land and state boundaries. The original file is "/mbostock/raw/4090846/us.json"
-        d3.json("us.json", function(error, us) {
+        d3.json("data/us.json", function(error, us) {
             if (error) throw error;
 
             svg.insert("path", ".graticule")
@@ -157,7 +157,7 @@
         // the data represents the total number of flights per airport
         // the function populates the variables above
         // the scaling is applied when calculating the sizes of circles
-        d3.csv("airports_size.csv", function(data) {
+        d3.csv("data/airports_size.csv", function(data) {
             var circle_size_scale = d3.scale.linear()
                 .range([5, 30])
                 .domain([d3.min(data, function(d) { return d.flights; }),
@@ -174,7 +174,7 @@
 
         // the function to draw circles that correspond to the airports
         // the data contains information about airports, we need location only
-        d3.csv("airports_sel.csv", function(airports) {
+        d3.csv("data/airports_sel.csv", function(airports) {
             airports = airports.filter(function(airport) {
                 var location = [+airport.long, +airport.lat];
                 positions[airport.iata] = projection(location);
@@ -218,7 +218,7 @@
 
 
         // process the connections between origin and destination airports
-        d3.csv("mutual.csv", function(data) {
+        d3.csv("data/mutual.csv", function(data) {
 
            // var tip = d3.tip()
            //         .attr('class', 'd3-tip')
