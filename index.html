@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js"></script>
+    <script src="plugins/d3-tip/index.js"></script>
     <style>
 
     .graticule {
@@ -42,6 +43,22 @@
         stroke: #fff;
     }
 
+    circle:hover {
+        fill: orange;
+        fill-opacity: .7;
+        stroke: #fff;
+    }
+
+    .d3-tip {
+        line-height: 1;
+        font-weight: bold;
+        padding: 12px;
+        background: rgba(0, 0, 0, 0.8);
+        color: #fff;
+        border-radius: 2px;
+        font-size: 70%;
+    }
+
     </style>
 </head>
 <body>
@@ -50,6 +67,7 @@
         var width = 960,
             height = 500;
 
+        // define the projection to us map
         var projection = d3.geo.albers()
             .rotate([96, 0])
             .center([-.6, 38.7])
@@ -58,26 +76,31 @@
             .translate([width / 2, height / 2])
             .precision(.1);
 
+        // define the path transformation function with the given projection
         var path = d3.geo.path()
             .projection(projection);
 
+        // define the graticule
         var graticule = d3.geo.graticule()
             .extent([[-98 - 45, 38 - 45], [-98 + 45, 38 + 45]])
             .step([5, 5]);
 
+        // append the new svg element to the html body
         var svg = d3.select("body").append("svg")
             .attr("width", width)
             .attr("height", height);
 
+        // construct the path for the graticule
         svg.append("path")
             .datum(graticule)
             .attr("class", "graticule")
             .attr("d", path);
 
+        // append the circles, which will represent airports
         var circles = svg.append("svg:g")
             .attr("id", "circles");
 
-        //d3.json("/mbostock/raw/4090846/us.json", function(error, us) {
+        // Draw US map, graticule and state boundaries. The original file is "/mbostock/raw/4090846/us.json"
         d3.json("us.json", function(error, us) {
             if (error) throw error;
 
@@ -97,16 +120,14 @@
                 .attr("d", path);
         });
 
-        edges = {}
 
-        d3.csv("mutual.csv", function(data) {
-            data.forEach(function(x) {
-                edges[]
-            });
-        });
+        
+        circle_sizes = {};  // size corresponds to the total flights
+        total_flights_per_airport = {};
 
-        circle_sizes = {}
-
+        // the data represents the total number of flights per airport
+        // the function populates the variables above
+        // the scaling is applied when calculating the sizes of circles
         d3.csv("airports_size.csv", function(data) {
             var circle_size_scale = d3.scale.linear()
                 .range([5, 30])
@@ -115,28 +136,128 @@
 
             data.forEach(function(x) {
                 circle_sizes[x.airport] = circle_size_scale(x.flights);
+                total_flights_per_airport[x.airport] = x.flights; 
             });
         });
 
+        
+        positions = {};  // positions of airports after projection to the map
+
+        // the function to draw circles that correspond to the airports
+        // the data contains information about airports, we need location only
         d3.csv("airports_sel.csv", function(airports) {
-            positions = [];
             airports = airports.filter(function(airport) {
                 var location = [+airport.long, +airport.lat];
-                //var iata = airport.iata;
-                //locationByAirport[airport.iata] = location;
-                positions.push(projection(location));
+                positions[airport.iata] = projection(location);
                 return true;
             });
-            //console.log(airport.iata)
 
+            // creates a tooltip to display the IATA code of the airport and the total flights 
+            var tip = d3.tip()
+                    .attr('class', 'd3-tip')
+                    .offset([-10, 0])
+                    .html(function(d) {
+                        return "<strong>Airport:</strong> <span style='color:red'>" + d.iata + "</span><br><br> \
+                        <strong>Total flights:</strong> <span style='color:red'>" + total_flights_per_airport[d.iata];
+                    });
+
+            svg.call(tip);
+
+            // create circles here 
+            // the mouseover and mouseout actions show/hide the tooltip
             circles.selectAll("circle")
                 .data(airports)
                 .enter().append("svg:circle")
-                .attr("cx", function(d, i) { return positions[i][0]; })
-                .attr("cy", function(d, i) { return positions[i][1]; })
-                .attr("r", function(d, i) { return circle_sizes[d.iata]; });
-                //.attr("r", function(d, i) { return Math.sqrt(countByAirport[d.iata]); })
-                //.sort(function(a, b) { return countByAirport[b.iata] - countByAirport[a.iata]; });
+                .attr("cx", function(d, i) { return positions[d.iata][0]; })
+                .attr("cy", function(d, i) { return positions[d.iata][1]; })
+                .attr("r", function(d, i) { return circle_sizes[d.iata]; })
+                .on('mouseover', function(d) {
+                            tip.show(d);
+                            svg.selectAll("path." + d.iata)
+                                .style("visibility", "visible");
+                        })
+                .on('mouseout', function(d) {
+                            tip.hide(d);
+                            svg.selectAll("path." + d.iata)
+                                .style("visibility", "hidden");
+                        })
+        });
+
+
+
+        // process the connections between origin and destination airports
+        d3.csv("mutual.csv", function(data) {
+
+            // definition of the line
+            var line = d3.svg.line()
+                .x(function(d) { return d.x; })
+                .y(function(d) { return d.y; })
+                .interpolate("basis");
+
+            
+            data.forEach(function(row) {
+                // display the line connecting two airports
+                points = [];
+                x1 = positions[row.origin_airport][0];
+                y1 = positions[row.origin_airport][1];
+                x2 = positions[row.destination_airport][0]; 
+                y2 = positions[row.destination_airport][1];
+                points.push({x: x1, y: y1});
+                points.push({x: x2, y: y2});
+
+                svg.append("path")
+                    .datum(points)
+                    .attr("d", line)
+                    .attr("class", row.origin_airport)
+                    .style("visibility", "hidden")
+                    .style("stroke", "black")
+                    .style('stroke-width', '2px');
+
+                // calculate and draw the first part of the arrow 
+                // using the change of basis A*t = W
+                points = [];
+                l = Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2))
+                a11 = (x1 - x2) / l;
+                a21 = (y1 - y2) / l;
+                a12 = -a21;
+                a22 = a11;
+                b = 0.5;
+                k = 10;
+                x3 = x2 + a11 * k * Math.cos(b) + a12 * k * Math.sin(b);
+                y3 = y2 + a21 * k * Math.cos(b) + a22 * k * Math.sin(b);
+                points.push({x: x2, y: y2});
+                points.push({x: x3, y: y3});
+                svg.append("path")
+                    .datum(points)
+                    .attr("d", line)
+                    .attr("class", row.origin_airport)
+                    .style("visibility", "hidden")
+                    .style("stroke", "black")
+                    .style('stroke-width', '2px');
+
+                // the same chunk is repeated for the second part of the arrow
+                // it had to be written in a function instead
+                points = [];
+                l = Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2))
+                a11 = (x1 - x2) / l;
+                a21 = (y1 - y2) / l;
+                a12 = -a21;
+                a22 = a11;
+                b = 0.5;
+                k = 10;
+                x3 = x2 + a11 * k * Math.cos(b) - a12 * k * Math.sin(b);
+                y3 = y2 + a21 * k * Math.cos(b) - a22 * k * Math.sin(b);
+                points.push({x: x2, y: y2});
+                points.push({x: x3, y: y3});
+                svg.append("path")
+                    .datum(points)
+                    .attr("d", line)
+                    .attr("class", row.origin_airport)
+                    .style("visibility", "hidden")
+                    .style("stroke", "black")
+                    .style('stroke-width', '2px');
+            });
+
         });
 
         d3.select(self.frameElement).style("height", height + "px");
