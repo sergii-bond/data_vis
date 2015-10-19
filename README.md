@@ -16,6 +16,7 @@ Exploratory data analysis and construction of the datasets for a visualization i
 
 #Design
 *(explain any design choices you made including changes to the visualization after collecting feedback)*
+* The data to display has a nature of a graph. Airports are nodes and edges are flights among them. It is good to tie the nodes to a map, since each airport has a corresponding geographical location. In addition people usually think of travelling (change of location) when they hear a word 'flights'. Placing the edges on a map gives a sense of direction.
 * The position of a circle corresponds to the position of the airport in the US map, this way helping users to get a better idea where an airport is located. 
 * The size of the circle corresponds to the total amount of flights for an airport. This helps a reader to qualitatively estimate the difference in flights among airports. 
 * The color of all circles was chosen to be uniform, because there exists no intended data to encode by color.
