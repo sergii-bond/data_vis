@@ -106,9 +106,11 @@
         d3.select("body").append("p")
             .text("Notes: Point your mouse over a red circle to see data")
             .append("p")
-            .text("The arrows designate the outgoing flights. The text on the \
+            .text("Circle's radius is proportional to the total number of \
+                    incoming and outgoing flights for the airport. The arrows designate the outgoing flights. The text on the \
                     tips of the arrows is the total number of outgoing flights \
-                    from the selected origin to a destination");
+                    from the selected origin to a destination. The text size is \
+                    proportional to this number.");
 
         // add title
         //svg.append("text")
@@ -164,6 +166,7 @@
                     d3.max(data, function(d) { return d.flights; })]);
 
             data.forEach(function(x) {
+                //console.log(circle_size_scale(x.flights));
                 circle_sizes[x.airport] = circle_size_scale(x.flights);
                 total_flights_per_airport[x.airport] = x.flights; 
             });
@@ -188,7 +191,7 @@
                     .html(function(d) {
                         return "<strong>Airport:</strong> <span style='color:red'>" + d.iata + "</span><br><br> \
                         <strong>City:</strong> <span style='color:red'>" + d.city + "</span><br><br> \
-                        <strong>Total flights:</strong> <span style='color:red'>" + total_flights_per_airport[d.iata] + "</span><br><br>" ;
+                        <strong>Total flights (in & out):</strong> <span style='color:red'>" + total_flights_per_airport[d.iata] + "</span><br><br>" ;
                     });
 
             svg.call(tip);
@@ -235,6 +238,13 @@
                 .x(function(d) { return d.x; })
                 .y(function(d) { return d.y; })
                 .interpolate("basis");
+
+            // scale for text size, corresponding to the number of outgoing flighs
+            var text_scale = d3.scale.linear()
+                .range([10, 30])
+                .domain([d3.min(data, function(d) { return Number(d.flights); }),
+                    d3.max(data, function(d) { return Number(d.flights); })]);
+
 
             
             data.forEach(function(row) {
@@ -290,6 +300,9 @@
                     //    'fill':'black'})
 
                     // Add text to see the outgoing number of flights by each destination
+                    fsize = text_scale(Number(row.flights));
+                    //console.log(fsize);
+                    //console.log(Number(row.flights));
                     svg.append('text')
                     .style("visibility", "hidden")
                     .style("pointer-events", "none")
@@ -297,7 +310,7 @@
                         //'id':function(d,i){return 'edgelabel'+i},
                         'x': x2,
                         'y': y2 - 10,
-                        'font-size':12,
+                        'font-size': fsize,
                         'font-family':"Verdana",
                         'font-weight':"bold",
                         'fill':'black'})
