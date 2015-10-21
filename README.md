@@ -157,6 +157,8 @@ confusing to the viewer".
   * Answer 3: "You convinced me. I have changed the default font family for the entire
     html."
 
+[Here](https://discussions.udacity.com/t/project-feedback-d3-visualization/35446) is the link to the page with the feedbacks listed above.
+
 #Resources 
 *(list any sources you consulted to create your visualization)*
 * http://d3js.org/
