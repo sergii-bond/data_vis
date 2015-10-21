@@ -7,7 +7,7 @@ The visualization communicates a simple message and answers two questions:
 
 Usage notes: 
 * Point your mouse over a red circle to see data
-* Circle's radius is proportional to the total number of incoming and outgoing flights for the airport
+* Circle's radius is proportional to the airport's total number of domestic incoming and outgoing flights from/to all airports accross US (not just top 15)
 * The arrows designate the outgoing flights 
 * The text on the tips of the arrows is the total number of outgoing flights from the selected origin to a destination. 
 The text size is proportional to this number
