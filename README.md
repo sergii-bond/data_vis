@@ -2,7 +2,7 @@
 *(in no more than 4 sentences, briefly introduce your data visualization and add any context that can help readers understand it)*
 
 The visualization communicates a simple message and answers two questions: 
-- What are the 10 largest airports in US by the number of domestic flights in 2008 ? 
+- What are the 15 largest airports in US by the number of domestic flights in 2008 ? 
 - How many flights occured between these airports ?
 
 Usage notes: 
@@ -65,6 +65,98 @@ confusing to the viewer".
     region were aggregated? (NYC/Philly for example or Oakland/SFO)" 
   * Answer 3: The implementation of this idea  would require a considerable investment of time. I decided not to proceed, though generally it could be interesting.
 
+* Iteration 2
+
+  Statements that assume possible revision:
+
+  * Comment 1: "As mentioned above, cutting at the top ten really misses important
+    airports. There are three New York city airports: EWR, LGA, JFK that carry
+    very large amounts of traffic. The US has hub airports and missing from
+    your story are Minneapolis-St Paul , Philadelphia, Charlotte, St Louis.
+    Dulles and Reagan in Dc are pretty busy as well. Those are what I can think
+    of. Although Seattlle in North West may not be that busy it is isolated. I
+    guess my recommendation is to include as many airports as possible until
+    the lines between them get too many. (and showing the New York airports
+    will be a challenge)"
+  * Answer 1: "I agree that it is possible to develop this visualization further
+    and, for example, include controls on the number of airports displayed, and
+    as Todd mentioned, focus on a particular area of the map. This would
+    require more work. Otherwise if I simply include more than 10 airports into
+    the dataset, the arrows and texts may overlap and make the chart hard to
+    read"
+
+  * Comment 2: "I think the radius is misleading and it is better to use square
+    root of number flights to set the radius, then the are will look more
+    realistic - compare Los Angles and Chicago
+  * Answer 2: If I use proportionality to circle's area, then I am afraid some
+    quick findings may not be apparent, for example, the one mentioned by Todd
+    and Stephen, that San Francisco has the smallest number of flights"
+
+  * Comment 3: "The numbers on the arrows don't add to the total in the tooltip
+    (mouseover) - maybe i misunderstand.
+  * Answer 3: the numbers do not add up to the total, because the total counts
+    both incoming and outgoing"
+
+  * Comment 4: "You choose to only plot outgoing flights. As a user, i am
+    obviously curious about incoming as well. But , are they very different?
+    every plane has to return eventually, but some may fly a number of stops
+    before returning. It just feels incomplete to show outgoing only" 
+  * Answer 4: "If you are interested in incoming flights, you could highlight
+    the opposite airport and see its outgoing flights to the airport of
+    interest. It would be better to add a control switch to decide what to
+    show, incoming or outgoing. Again, we can see that the space for
+    improvement is large"
+
+  * Comment 5: "You may want to experiment with width of lines set to number of
+    flights - it may need a minimum and maximum width. This wont be perfect but
+    may give a better visual sense. Perhaps try log of the number of flights" 
+  * Answer 5: "I considered to use line thickness encoding, but rejected it,
+    because the eye differentiates line thickness difference not very well,
+    unless the thickness increments are significant. But in the latter case,
+    the thick lines will make other components of the picture less visible"
+
+  * Comment 6: "Use a modern font for title and text" 
+  * Answer 6: "The font could be improved, I agree. But I do not consider the
+    style to be of importance in this project, so I didn't experiment with
+    various fonts and colors here"
+
+* Iteration 3
+
+  Statements that assume possible revision:
+
+  * Comment 1: "The numbers are off From Chicago, there are ten arrows each with
+    a number 10,000. So the maximum total is <100,000 The mouse over on Chicago
+    shows 700,000. All the cities have this problem. Something is wrong, the
+    difference is not inbound"
+  * Answer 1: "I like that you pay attention to accuracy, I would do the same thing.
+    After I read your comment I was sure I had a bug in data processing.
+    However after reviewing the codes I realized that everything is right except
+    explanation in the graph. The total flights number counts all incoming and
+    outgoing flights from/to all airports in US, not just top 10. I apologize
+    for forgetting this and not writing explicitly. I will correct the description below the chart"
+
+  * Comment 2: Visualizations always have problems with numbers of lines etc
+    and these problems need to be solved. A USA air travel story that doesn't
+    include New York airports or any airport on the eastcoast of the USA feels
+    very incomplete when that is, as best I know, the busiest air space in the
+    world. See this thread for example www.airliners.net/aviation-forums/general_aviation/read.main/3255739/
+    if you look at Busiest airports by aircraft movement1, there is a lot in
+        common with your list, but San Franciso is only number 24 . Your list
+        correspond mostly but does not include Charlotte or Philadelphia. I
+        tried to look at your data but it is already summarized.
+  * Answer 2: "I was able to increase the number of airports to 15 without sacrificing the quality of the picture.
+    Now Charlotte is included, as well as Newark. Thank you for the links. Please also note that the data describe domestic flights only, international are not included"
+
+  * Comment 3: "Fonts for heading and text - I think style is always important,
+    particularly in visualizations. Its not about optimizing every element, but
+    its important to ensure that elements do not detract. In this case there is
+    no need to experiment with many fonts, just choose a more modern font than
+    what I think is the browser default font from when the web was invented. I
+    have simply used font-family: "Helvetica Neue",Arial,sans-serif; Of course
+    this is all subjective ..." 
+  * Answer 3: "You convinced me. I have changed the default font family for the entire
+    html."
+
 #Resources 
 *(list any sources you consulted to create your visualization)*
 * http://d3js.org/
@@ -73,3 +165,4 @@ confusing to the viewer".
 * https://github.com/mbostock/d3/wiki/SVG-Shapes
 * http://www.w3schools.com/js/js_math.asp
 * https://www.stat.auckland.ac.nz/~joh024/Research/D3js/SelNavSVG/SelNavSVG.html
+* http://www.d3noob.org/2013/03/a-simple-d3js-map-explained.html

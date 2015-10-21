@@ -7,6 +7,11 @@
     <script src="plugins/d3-tip/index.js"></script>
     <style>
 
+    html {
+        /*font-family: "Helvetica Neue",Arial,sans-serif;*/
+        font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    }
+
     .graticule {
         fill: none;
         stroke: #777;
@@ -79,6 +84,7 @@
             .rotate([96, 0])
             .center([-.6, 38.7])
             .parallels([29.5, 45.5])
+            //.scale(1070)
             .scale(1070)
             .translate([width / 2, height / 2])
             .precision(.1);
@@ -95,7 +101,7 @@
         // add title
         d3.select("body").append("h2")
             .attr("text-anchor", "middle")  
-            .text("Number of US domestic flights in 10 largest airports in 2008");
+            .text("Number of US domestic flights in 15 largest airports in 2008");
 
         // append the new svg element to the html body
         var svg = d3.select("body").append("svg")
@@ -106,8 +112,9 @@
         d3.select("body").append("p")
             .text("Notes: Point your mouse over a red circle to see data")
             .append("p")
-            .text("Circle's radius is proportional to the total number of \
-                    incoming and outgoing flights for the airport. The arrows designate the outgoing flights. The text on the \
+            .text("Circle's radius is proportional to the airport's total number of domestic \
+                    incoming and outgoing flights from/to all airports accross \
+                    US (not just top 15). The arrows designate the outgoing flights. The text on the \
                     tips of the arrows is the total number of outgoing flights \
                     from the selected origin to a destination. The text size is \
                     proportional to this number.");
@@ -119,7 +126,7 @@
         //    .attr("text-anchor", "middle")  
         //    .style("font-size", "16px") 
         //    //.style("text-decoration", "underline")  
-        //    .text("Summary of flights in 10 US largest airports in 2008");
+        //    .text("Summary of flights in 15 US largest airports in 2008");
 
         // construct the path for the graticule
         //svg.append("path")
@@ -191,7 +198,7 @@
                     .html(function(d) {
                         return "<strong>Airport:</strong> <span style='color:red'>" + d.iata + "</span><br><br> \
                         <strong>City:</strong> <span style='color:red'>" + d.city + "</span><br><br> \
-                        <strong>Total flights (in & out):</strong> <span style='color:red'>" + total_flights_per_airport[d.iata] + "</span><br><br>" ;
+                        <strong>Total flights:</strong> <span style='color:red'>" + total_flights_per_airport[d.iata] + "</span><br><br>" ;
                     });
 
             svg.call(tip);
@@ -365,6 +372,7 @@
         });
 
         d3.select(self.frameElement).style("height", height + "px");
+
 
     </script>
 </body>

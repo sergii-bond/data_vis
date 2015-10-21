@@ -2,7 +2,7 @@
 df = read.csv("2008.csv")
 
 library("dplyr")
-n = 10
+n = 15
 outgoing = group_by(df, Origin) %>% 
   summarize(flights = n()) %>%
   arrange(desc(flights)) %>%
@@ -51,6 +51,6 @@ for (x in outgoing$airport) {
 #airport_size$flights = max(airport_size$flights) - min(airports_size)
 
 airports_sel = subset(airports, iata %in% mutual$origin_airport | iata %in% mutual$destination_airport)
-write.csv(mutual, "mutual.csv")
-write.csv(airports_sel, "airports_sel.csv")
-write.csv(airports_size, "airports_size.csv")
+write.csv(mutual, "data/mutual.csv")
+write.csv(airports_sel, "data/airports_sel.csv")
+write.csv(airports_size, "data/airports_size.csv")
