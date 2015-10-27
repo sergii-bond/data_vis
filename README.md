@@ -125,7 +125,7 @@ confusing to the viewer".
     style to be of importance in this project, so I didn't experiment with
     various fonts and colors here"
 
-* Iteration 3 (index\_3.html)
+* Iteration 3 
 
   Statements that assume possible revision:
 
@@ -163,7 +163,7 @@ confusing to the viewer".
     html."
   * Revision resulted in index\_3.html
 
-* Iteration 4 (index.html)
+* Iteration 4
   * This iteration was made after the feedback from Udacity coach. The
      feedback itself is not documented here.
   * The following changes were made: 
