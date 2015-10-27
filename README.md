@@ -68,6 +68,7 @@ confusing to the viewer".
   * Comment 3: "I wonder what a similar graphic would look like if multiple airports in a small geographic
     region were aggregated? (NYC/Philly for example or Oakland/SFO)" 
   * Answer 3: The implementation of this idea  would require a considerable investment of time. I decided not to proceed, though generally it could be interesting.
+  * Revision resulted in index\_2.html
 
 * Iteration 2
 
@@ -124,7 +125,7 @@ confusing to the viewer".
     style to be of importance in this project, so I didn't experiment with
     various fonts and colors here"
 
-* Iteration 3
+* Iteration 3 (index\_3.html)
 
   Statements that assume possible revision:
 
@@ -160,17 +161,19 @@ confusing to the viewer".
     this is all subjective ..." 
   * Answer 3: "You convinced me. I have changed the default font family for the entire
     html."
+  * Revision resulted in index\_3.html
 
 * Iteration 4 (index.html)
-    * This iteration was made after the feedback from Udacity coach. The
-      feedback itself is not documented here.
-    * The following changes were made: 
+  * This iteration was made after the feedback from Udacity coach. The
+     feedback itself is not documented here.
+  * The following changes were made: 
         * Now circle's area is proportional to the total number of flights, not
           its radius
         * Added a legend for circle sizes
         * Encoded the arrows by color and added the legend
         * Changed the title and added a main takeaway from the visualization,
           making it more explanatory rather than exploratory
+  * Revision resulted in index.html
 
 [Here](https://discussions.udacity.com/t/project-feedback-d3-visualization/35446) is the link to the page with the feedbacks listed above.
 
