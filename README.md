@@ -163,6 +163,8 @@ confusing to the viewer".
     html."
   * Revision resulted in index\_3.html
 
+[Here](https://discussions.udacity.com/t/project-feedback-d3-visualization/35446) is the link to the page with the feedbacks listed above.
+
 * Iteration 4
   * This iteration was made after the feedback from Udacity coach. The
      feedback itself is not documented here.
@@ -175,7 +177,6 @@ confusing to the viewer".
           making it more explanatory rather than exploratory
   * Revision resulted in index.html
 
-[Here](https://discussions.udacity.com/t/project-feedback-d3-visualization/35446) is the link to the page with the feedbacks listed above.
 
 #Resources 
 *(list any sources you consulted to create your visualization)*
