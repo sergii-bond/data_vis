@@ -2,13 +2,12 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js"></script>
+    <script src="plugins/d3.min.js"></script>
+    <script src="plugins/topojson.min.js"></script>
     <script src="plugins/d3-tip/index.js"></script>
     <style>
 
     html {
-        /*font-family: "Helvetica Neue",Arial,sans-serif;*/
         font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
     }
 
@@ -20,30 +19,17 @@
     }
 
     .land {
-        /*fill: #222;*/
-        
         fill: none;
         stroke: #ACB3B5;
     }
 
-    /*
-    .county-boundary {
-        fill: none;
-        stroke: #fff;
-        stroke-width: .5px;
-    }
-    */
-
     .state-boundary {
-        /*fill: none;
-        stroke: #fff;
-        */
         fill: none;
         stroke: #ACB3B5;
     }
 
     circle {
-        fill: red;
+        fill: #f768a1;
         fill-opacity: .7;
         stroke: #fff;
     }
@@ -64,13 +50,6 @@
         font-size: 70%;
     }
 
-    /*
-    .arrow {
-        stroke : #7F878A;
-        stroke-width : '2px';
-    }
-    */
-
     </style>
 </head>
 <body>
@@ -84,7 +63,6 @@
             .rotate([96, 0])
             .center([-.6, 38.7])
             .parallels([29.5, 45.5])
-            //.scale(1070)
             .scale(1070)
             .translate([width / 2, height / 2])
             .precision(.1);
@@ -101,7 +79,12 @@
         // add title
         d3.select("body").append("h2")
             .attr("text-anchor", "middle")  
-            .text("Number of US domestic flights in 15 largest airports in 2008");
+            .text("US domestic flights in 15 largest airports in 2008");
+
+        d3.select("body").append("p")
+            .text("Outgoing flights mostly happened to nearby \
+                    airports, but not always. \
+            Point your mouse over the circles to see why.")
 
         // append the new svg element to the html body
         var svg = d3.select("body").append("svg")
@@ -110,29 +93,20 @@
 
         // Add a note 
         d3.select("body").append("p")
-            .text("Notes: Point your mouse over a red circle to see data")
             .append("p")
-            .text("Circle's radius is proportional to the airport's total number of domestic \
+            .text("Circle's area is proportional to the airport's total number of domestic \
                     incoming and outgoing flights from/to all airports accross \
-                    US (not just top 15). The arrows designate the outgoing flights. The text on the \
+                    US (not just top 15). The legend in the top right corner \
+                    gives a sense of how this number corresponds to a circle's size. \
+                    The arrows designate the outgoing flights. The text on the \
                     tips of the arrows is the total number of outgoing flights \
                     from the selected origin to a destination. The text size is \
-                    proportional to this number.");
-
-        // add title
-        //svg.append("text")
-        //    .attr("x", (width / 2))             
-        //    .attr("y", height - 60)
-        //    .attr("text-anchor", "middle")  
-        //    .style("font-size", "16px") 
-        //    //.style("text-decoration", "underline")  
-        //    .text("Summary of flights in 15 US largest airports in 2008");
-
-        // construct the path for the graticule
-        //svg.append("path")
-        //    .datum(graticule)
-        //    .attr("class", "graticule")
-        //    .attr("d", path);
+                    proportional to this number. A color of an arrow designates \
+                    one of three bins in which this number falls. The bins are \
+                    calculated by dividing an interval between minimum and \
+                    maximum numbers of outgoing flights for a given origin in \
+                    three parts. The legend shows the range of values inside each bin. \
+                    ");
 
         // append the circles, which will represent airports
         var circles = svg.append("svg:g")
@@ -146,11 +120,6 @@
                 .datum(topojson.feature(us, us.objects.land))
                 .attr("class", "land")
                 .attr("d", path);
-
-            //svg.insert("path", ".graticule")
-            //    .datum(topojson.mesh(us, us.objects.counties, function(a, b) { return a !== b && !(a.id / 1000 ^ b.id / 1000); }))
-            //    .attr("class", "county-boundary")
-            //    .attr("d", path);
 
             svg.insert("path", ".graticule")
                 .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
@@ -167,16 +136,51 @@
         // the function populates the variables above
         // the scaling is applied when calculating the sizes of circles
         d3.csv("data/airports_size.csv", function(data) {
+            var a_min = d3.min(data, function(d) { return d.flights; });
+            var a_max = d3.max(data, function(d) { return d.flights; });
+            var d_min = Math.sqrt(a_min);
+            var d_max = Math.sqrt(a_max);
+            var r_min = 10;
+            var r_max = r_min * d_max / d_min;
             var circle_size_scale = d3.scale.linear()
-                .range([5, 30])
-                .domain([d3.min(data, function(d) { return d.flights; }),
-                    d3.max(data, function(d) { return d.flights; })]);
+                .range([r_min, r_max])
+                .domain([d_min, d_max]);
 
             data.forEach(function(x) {
-                //console.log(circle_size_scale(x.flights));
-                circle_sizes[x.airport] = circle_size_scale(x.flights);
+                circle_sizes[x.airport] = circle_size_scale(Math.sqrt(Number(x.flights)));
                 total_flights_per_airport[x.airport] = x.flights; 
             });
+
+            // a legend for circle size
+            var x_pos = 20;
+            var y_pos = 20;
+            svg.append('text')
+                .attr('x', x_pos - 10)
+                .attr('y', y_pos)
+                .attr("font-size", "70%")
+                .text("Total Flights Legend");
+
+            svg.append("svg:circle")
+                .attr("cx", x_pos)
+                .attr("cy", y_pos + 20)
+                .attr("r", circle_size_scale(Math.sqrt(100000)));
+
+            svg.append('text')
+                .attr('x', x_pos + 20)
+                .attr('y', y_pos + 20)
+                .attr("font-size", "70%")
+                .text("100,000");
+
+            svg.append("svg:circle")
+                .attr("cx", x_pos)
+                .attr("cy", y_pos + 50)
+                .attr("r", circle_size_scale(Math.sqrt(1000000)));
+
+            svg.append('text')
+                .attr('x', x_pos + 20)
+                .attr('y', y_pos + 50)
+                .attr("font-size", "70%")
+                .text("1000,000");
         });
 
         
@@ -230,16 +234,6 @@
         // process the connections between origin and destination airports
         d3.csv("data/mutual.csv", function(data) {
 
-           // var tip = d3.tip()
-           //         .attr('class', 'd3-tip')
-           //         .offset([-10, 0])
-           //         .html(function(d) {
-           //             return "<strong>Destination:</strong> <span style='color:red'>" + d.destination_airport+ "</span><br><br> \
-           //             <strong>Flights:</strong> <span style='color:red'>" + d.flights;
-           //         });
-
-           // svg.call(tip);
-
             // definition of the line
             var line = d3.svg.line()
                 .x(function(d) { return d.x; })
@@ -252,9 +246,29 @@
                 .domain([d3.min(data, function(d) { return Number(d.flights); }),
                     d3.max(data, function(d) { return Number(d.flights); })]);
 
-
             
             data.forEach(function(row) {
+
+                // scale for line color, corresponding to the number of outgoing flighs
+                var line_scale = d3.scale.quantize()
+                    .domain([d3.min(data, function(d) { 
+                                if (d.origin_airport == row.origin_airport) { 
+                                    return Number(d.flights); 
+                                } else {
+                                    return 0;
+                                } 
+                            }),
+                            d3.max(data, function(d) { 
+                                if (d.origin_airport == row.origin_airport) { 
+                                    return Number(d.flights); 
+                                } else {
+                                    return 0;
+                                } 
+                            })])
+                    .range(['yellow', 'blue', 'red']);
+                    //.range(['#ffeda0', '#feb24c', '#f03b20']);
+
+
                 // display the line connecting two airports
                 points = [];
                 x1 = positions[row.origin_airport][0];
@@ -270,67 +284,68 @@
                     .attr("d", line)
                     .style("pointer-events", "none")
                     .attr("class", row.origin_airport)
-                    .style("stroke", "#7F878A")
-                    .style('stroke-width', '2px')
-                    //.attr("class", "arrow")
+                    .style("stroke", line_scale(Number(row.flights)))
+                    .style('stroke-width', "2px") 
                     .style("visibility", "hidden")
-                    //.attr('id', function(d,i) {return row.origin_airport + row.destination_airport})
 
-                //svg.append("path")
-                //    .datum(points)
-                //    .attr("d", line)
-                //    //.attr("class", row.origin_airport)
-                //    .style("visibility", "hidden")
-                //    .style("stroke", "black")
-                //    .style('stroke-width', '2px')
-                //    .attr('id', function(d,i) {return row.origin_airport + row.destination_airport})
 
-                //svg.selectAll('circle.' + 'cir' + row.destination_airport)
-                //svg.append('text')
-                //    .attr({'class': row.origin_airport,
-                //        'x': 100,
-                //        'y':100,
-                //        'font-size':30,
-                //        'fill':'black'})
-                //    .text(row.flights);
-
-                //var edgelabels = svg.selectAll(".edgelabel")
-                //    .datum(row)
-                //    .enter()
-                    //svg.append('rect')
-                    //.style("visibility", "hidden")
-                    //.attr({'class':row.origin_airport,
-                    //    'x': x2,
-                    //    'y': y2,
-                    //    width : 50,
-                    //    height : 20,
-                    //    'fill':'black'})
 
                     // Add text to see the outgoing number of flights by each destination
                     fsize = text_scale(Number(row.flights));
-                    //console.log(fsize);
-                    //console.log(Number(row.flights));
                     svg.append('text')
                     .style("visibility", "hidden")
                     .style("pointer-events", "none")
                     .attr({'class':row.origin_airport,
-                        //'id':function(d,i){return 'edgelabel'+i},
                         'x': x2,
                         'y': y2 - 10,
                         'font-size': fsize,
                         'font-family':"Verdana",
                         'font-weight':"bold",
                         'fill':'black'})
-                    //.append('textPath')
-                    //.attr('xlink:href',function(d,i) {return '#' + row.origin_airport + row.destination_airport})
-                    //.style("pointer-events", "none")
                     .text(function(d,i){return row.flights});
 
+                var legendRectSize = 18;
+                var legendSpacing = 4;
 
-                //tip.show(row, d3.selectAll("circle" + row.destination_airport));
+                svg.append('text')
+                    .attr("class", row.origin_airport)
+                    .style("visibility", "hidden")
+                    .attr('transform', "translate(800, 230)") 
+                    //.attr('x', legendrectsize + legendspacing)
+                    //.attr('y', legendrectsize - legendspacing)
+                    .attr("font-size", "70%")
+                    .text("Number of outgoing flights");
 
-                //tip.show(row, c);
-                    
+                for(i = 0; i < line_scale.range().length; i++) {
+                    d = line_scale.range()[i];
+
+                    var horz = 800;
+                    var vert = 250 + i * (legendRectSize + 10);
+                    trans = 'translate(' + horz + ',' + vert + ')';
+
+                    x = line_scale.invertExtent(d); 
+                    t = Math.round(x[0]) + " - " + Math.round(x[1]);
+
+                    svg.append('g')
+                        .attr("class", row.origin_airport)
+                        .style("visibility", "hidden")
+                        .attr('transform', trans) 
+                        .append('rect')
+                            .attr('width', legendRectSize)
+                            .attr('height', legendRectSize)
+                            .style('fill', d )
+                            .style('stroke', d )
+
+                    svg.append('text')
+                        .attr("class", row.origin_airport)
+                        .style("visibility", "hidden")
+                        .attr('transform', trans) 
+                        .attr('x', legendRectSize + legendSpacing)
+                        .attr('y', legendRectSize - legendSpacing)
+                        .attr("font-size", "70%")
+                        .text(t);
+                }
+
 
                 // calculate and draw the first part of the arrow 
                 // using the change of basis A*t = W
@@ -350,7 +365,7 @@
                     .attr("d", line)
                     .attr("class", row.origin_airport)
                     .style("visibility", "hidden")
-                    .style("stroke", "#7F878A")
+                    .style("stroke", line_scale(Number(row.flights)))
                     .style('stroke-width', '2px');
 
                 // the same chunk is repeated for the second part of the arrow
@@ -365,7 +380,7 @@
                     .attr("d", line)
                     .attr("class", row.origin_airport)
                     .style("visibility", "hidden")
-                    .style("stroke", "#7F878A")
+                    .style("stroke", line_scale(Number(row.flights)))
                     .style('stroke-width', '2px');
             });
 

@@ -1,16 +1,20 @@
 #Summary
 *(in no more than 4 sentences, briefly introduce your data visualization and add any context that can help readers understand it)*
 
-The visualization communicates a simple message and answers two questions: 
-- What are the 15 largest airports in US by the number of domestic flights in 2008 ? 
-- How many flights occured between these airports ?
+The visualization communicates the following finding: 
+- Outgoing flights mostly happened to nearby airports, but not always.
 
 Usage notes: 
-* Point your mouse over a red circle to see data
-* Circle's radius is proportional to the airport's total number of domestic incoming and outgoing flights from/to all airports accross US (not just top 15)
-* The arrows designate the outgoing flights 
-* The text on the tips of the arrows is the total number of outgoing flights from the selected origin to a destination. 
-The text size is proportional to this number
+* Circle's area is proportional to the airport's total number of domestic
+incoming and outgoing flights from/to all airports accross US (not just top
+15). The legend in the top right corner gives a sense of how this number
+corresponds to a circle's size. 
+* The arrows designate the outgoing flights. The text on the tips of the arrows is the total number of outgoing flights from the
+selected origin to a destination. The text size is proportional to this number.
+A color of an arrow designates one of three bins in which this number falls.
+The bins are calculated by dividing an interval between minimum and maximum
+numbers of outgoing flights for a given origin in three parts. The legend shows
+the range of values inside each bin. 
 
 The original dataset was downloaded from [here](http://stat-computing.org/dataexpo/2009/2008.csv.bz2) and [here](http://stat-computing.org/dataexpo/2009/airports.csv)
 
@@ -156,6 +160,17 @@ confusing to the viewer".
     this is all subjective ..." 
   * Answer 3: "You convinced me. I have changed the default font family for the entire
     html."
+
+* Iteration 4 (index.html)
+    * This iteration was made after the feedback from Udacity coach. The
+      feedback itself is not documented here.
+    * The following changes were made: 
+        * Now circle's area is proportional to the total number of flights, not
+          its radius
+        * Added a legend for circle sizes
+        * Encoded the arrows by color and added the legend
+        * Changed the title and added a main takeaway from the visualization,
+          making it more explanatory rather than exploratory
 
 [Here](https://discussions.udacity.com/t/project-feedback-d3-visualization/35446) is the link to the page with the feedbacks listed above.
 
